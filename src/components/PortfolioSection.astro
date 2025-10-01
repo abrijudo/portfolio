@@ -1,0 +1,65 @@
+---
+import ProjectCard from './ProjectCard.astro';
+
+const projects = [
+  {
+    title: "Coronela songs - Página web",
+    description:
+      "CoronelaSongs es una aplicación web creada para una streamer que buscaba ofrecer a su comunidad un concurso interactivo de adivinar canciones. Permite a los usuarios escuchar fragmentos musicales, enviar respuestas y acumular puntuaciones en tiempo real, todo dentro de una interfaz sencilla, accesible y optimizada para usarse durante transmisiones en vivo.",
+    stack: ["Astro"],
+    backend: "Supabase",
+    deploy: "Vercel",
+    demoUrl: "https://coronelasongs.vercel.app/",
+    repoUrl: "https://github.com/abrijudo/coronelas-songs",
+  },
+  {
+    title: "CV Abraham Alvarez - Página web",
+    description:
+      "Sitio web personal desarrollado con Astro y desplegado en Netlify que funciona como currículum digital interactivo. En él presento mi perfil profesional, experiencia, formación y competencias técnicas, con especial enfoque en la accesibilidad web y el desarrollo multiplataforma. El objetivo es ofrecer una versión moderna y accesible de mi CV, optimizada para diferentes dispositivos y navegadores.",
+    stack: ["Astro"],
+    backend: "",
+    deploy: "Netlify",
+    demoUrl: "https://cv-abrahamalvarez.netlify.app/",
+    repoUrl: "https://github.com/abrijudo/cv_abrahamAlvarez",
+  },
+  {
+    title: "Compra familiar - Página web",
+    description:
+      "Comprafamilia es una aplicación web desarrollada para facilitar la organización de compras en grupo. Permite a usuarios crear listas de la compra y compartirlas con amigos o familiares, manteniéndose siempre sincronizadas en tiempo real. El objetivo es mejorar la comunicación y la eficiencia en tareas cotidianas mediante una interfaz sencilla, accesible y optimizada para distintos dispositivos. Con este proyecto demuestro mis conocimientos en desarrollo web moderno, gestión de datos en la nube y usabilidad centrada en el usuario.",
+    stack: ["Astro"],
+    backend: "Firebase",
+    deploy: "Vercel",
+    demoUrl: "https://compra-familiar.vercel.app/",
+    repoUrl: "https://github.com/abrijudo/comprafamilia",
+  },
+  {
+    title: "Tecnologicos - Página web",
+    description:
+      "Tecnológicos es un catálogo web de dispositivos móviles diseñado como ejemplo para una institución pública, enfocándose en accesibilidad. Desarrollado con HTML, CSS y JavaScript puros, muestra cómo presentar información de productos de forma clara, navegable y usable por todos, incluyendo usuarios con necesidades especiales.",
+    stack: ["HTML", "CSS", "JS"],
+    backend: "",
+    deploy: "Vercel",
+    demoUrl: "https://tecnologicos.vercel.app/",
+    repoUrl: "https://github.com/abrijudo/Tecnologicos",
+  },
+];
+---
+
+<section class="mb-12">
+  <h2
+    class="text-5xl font-extrabold text-center mb-10 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 animate-fade-in"
+  >
+    Mi Portafolio
+  </h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {projects.map((project, index) => (
+      <ProjectCard project={project} delay={index * 100} />
+    ))}
+  </div>
+</section>
+
+<style>
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .animate-fade-in { animation: fadeIn 1s ease-out forwards; }
+</style>

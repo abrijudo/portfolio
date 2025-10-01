@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import PortfolioSection from '../components/PortfolioSection.astro';
+import EducationTimeline from "../components/EducationTimeline.astro";
+
+// 📌 Formación
+const education = [
+  { title: "Gestión Administrativa (Grado Medio)", center: "Colegio La Salle", start: "2018", end: "2020", description: "Formación en administración, gestión documental, ofimática y procesos empresariales.", tags: ["Administración", "Ofimática"] },
+  { title: "Desarrollo de Aplicaciones Web (DAW)", center: "Tunivers Formación", start: "2021", end: "2023", description: "HTML5, CSS3, JavaScript, PHP y MySQL. Maquetación, backend y despliegue de aplicaciones web.", tags: ["HTML5","CSS3","JavaScript","PHP","MySQL"] },
+  { title: "Desarrollo de Aplicaciones Multiplataforma (DAM)", center: "Tunivers Formación", start: "2023", end: "2024", description: "Aplicaciones móviles y de escritorio con Java, C#, Android e Ionic.", tags: ["Java","C#","Android","Ionic"] },
+  { title: "Accesibilidad Web (300h)", center: "Fundación Integralia", start: "2025", end: "2025", description: "Buenas prácticas WCAG, auditorías y elaboración de informes IRA.", tags: ["WCAG","Lighthouse","WAVE","axe"] },
+];
+
+// 📌 Experiencia
+const experience = [
+  {
+    title: "Ayuntamiento de Cangas del Narcea · Accesibilidad Web",
+    center: "Ayuntamiento de Cangas del Narcea",
+    start: "2025",                       
+    description: "Evaluación de accesibilidad con herramientas y elaboración del Informe de Revisión de Accesibilidad (IRA).",
+    tags: ["Accesibilidad", "WCAG", "IRA"]
+  },
+  {
+    title: "Desarrollador Multiplataforma (Prácticas)",
+    center: "IRICOM",
+    start: "2024",                       
+    description: "Interfaces de usuario para apps multiplataforma y depuración para mejorar rendimiento y estabilidad.",
+    tags: ["Java", "Android", "Optimización"]
+  },
+  {
+    title: "Desarrollador Web (Prácticas)",
+    center: "INTEDYA",
+    start: "2023",                        
+    description: "Desarrollo y mantenimiento de sitios web. Formularios y bases de datos.",
+    tags: ["HTML", "CSS", "JavaScript", "MySQL"]
+  },
+];
+---
+
+<Layout title="Abraham Alvarez Leal - Desarrollador web, multiplataforma y experto en accesibilidad web">
+  <main class="container mx-auto px-4 py-8 sections-wrapper">
+    <Hero />
+    <PortfolioSection />
+    <div class="section-separator"></div>
+    <!-- Experiencia -->
+    <EducationTimeline items={experience} title="Experiencia" />
+
+    <!-- Formación -->
+    <div class="section-separator"></div> <!-- 👈 separador visual -->
+    <EducationTimeline items={education} title="Formación" />
+  </main>
+</Layout>
+
+<style>
+  h2.timeline__title { text-align: center; }
+
+  /* Más espacio entre experiencia y formación */
+  .section-separator {
+    margin: 6rem 0 4rem; /* arriba 96px, abajo 64px */
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(179,140,255,0.6),
+      transparent
+    );
+    border-radius: 999px;
+  }
+</style>
+

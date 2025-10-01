@@ -1,0 +1,39 @@
+---
+interface Props {
+  article: {
+    title: string;
+    excerpt: string;
+    link: string;
+  };
+  delay?: number;
+}
+
+const { article, delay = 0 } = Astro.props;
+---
+
+<a href={article.link}
+   class="block bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-xl
+          transform hover:scale-105 hover:border-red-500 transition-all duration-300 ease-in-out
+          flex flex-col justify-between h-full animate-slide-up"
+   style={`animation-delay: ${delay}ms;`}>
+  <div>
+    <h3 class="text-2xl font-bold mb-3 text-red-400">
+      {article.title}
+    </h3>
+    <p class="text-gray-300 text-lg">
+      {article.excerpt}
+    </p>
+  </div>
+  <span class="mt-6 inline-flex items-center text-orange-400 hover:text-orange-300 font-semibold text-lg">
+    Leer Artículo
+    <svg class="ml-2 w-5 h-5 transform translate-x-0 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+  </span>
+</a>
+
+<style>
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-slide-up { animation: slideUp 0.6s ease-out forwards; }
+</style>
