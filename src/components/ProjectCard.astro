@@ -169,6 +169,9 @@ const projectType = project.backend ? 'Full stack' : 'Frontend';
 
   .project-card__cta:hover {
     transform: translateY(-1px);
+  }
+
+  .project-card__cta:not(.project-card__cta--primary):hover {
     background: rgba(24, 32, 54, 0.82);
   }
 
@@ -186,6 +189,29 @@ const projectType = project.backend ? 'Full stack' : 'Frontend';
 
   .project-card__cta:not(.project-card__cta--primary) {
     background: rgba(18, 26, 42, 0.7);
+  }
+
+  @media (max-width: 520px) {
+    .project-card {
+      padding: 1.4rem 1.1rem;
+    }
+
+    .project-card__body {
+      gap: 0.8rem;
+    }
+
+    .project-card__stack {
+      gap: 0.35rem;
+    }
+
+    .project-card__footer {
+      gap: 0.5rem;
+    }
+
+    .project-card__cta {
+      display: flex;
+      width: 100%;
+    }
   }
 
   @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }

@@ -102,18 +102,22 @@ const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURICo
   .hero__container {
     display: grid;
     gap: clamp(2rem, 4vw, 3.5rem);
-    align-items: center;
+    align-items: stretch;
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 100%;
   }
 
   @media (min-width: 960px) {
     .hero__container {
       grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      align-items: center;
     }
   }
 
   .hero__content {
     display: grid;
     gap: clamp(1.2rem, 2vw, 1.8rem);
+    min-width: 0;
   }
 
   .hero__eyebrow {
@@ -131,7 +135,6 @@ const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURICo
     font-weight: 700;
     line-height: 1.05;
     color: var(--text-0);
-    white-space: nowrap;
   }
 
   .hero__name {
@@ -183,6 +186,7 @@ const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURICo
     flex-wrap: wrap;
     gap: 0.85rem;
     align-items: center;
+    min-width: 0;
   }
 
   .hero__button {
@@ -227,6 +231,7 @@ const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURICo
     border-radius: var(--radius-md);
     background: var(--surface-2);
     border: 1px solid rgba(148, 163, 184, 0.18);
+    min-width: 0;
   }
 
   .hero__metrics div { display: grid; gap: 0.25rem; }
@@ -235,12 +240,20 @@ const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURICo
 
   .hero__aside {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    min-width: 0;
+  }
+
+  @media (min-width: 960px) {
+    .hero__aside {
+      justify-content: center;
+    }
   }
 
   .hero__card {
     margin: 0;
-    width: clamp(14rem, 42vw, 18rem);
+    width: 100%;
+    max-width: clamp(12rem, 42vw, 18rem);
     background: var(--surface-card);
     border-radius: var(--radius-md);
     border: 1px solid rgba(148, 163, 184, 0.18);
@@ -300,11 +313,46 @@ const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURICo
 
   @media (max-width: 720px) {
     .hero {
-      padding: 2rem 1.6rem;
+      padding: 2rem 1.4rem;
+    }
+
+    .hero__container {
+      gap: 1.8rem;
+    }
+
+    .hero__card {
+      width: 100%;
+      max-width: none;
+      margin-inline: 0;
     }
 
     .hero__metrics {
       grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      padding: 1.8rem 1.2rem;
+    }
+
+    .hero__actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .hero__button {
+      width: 100%;
+    }
+
+    .hero__metrics {
+      padding: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero {
+      padding: 1.6rem 1rem;
     }
   }
 </style>

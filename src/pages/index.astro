@@ -1,4 +1,4 @@
----
+﻿---
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import PortfolioSection from '../components/PortfolioSection.astro';
@@ -62,22 +62,24 @@ const experience = [
 
 <style>
   .page {
-    width: min(1120px, 100%);
+    width: 100%;
+    max-width: 1120px;
     margin: 0 auto;
-    padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 4vw, 2.8rem) clamp(4rem, 7vw, 6rem);
+    padding: clamp(2rem, 6vw, 5rem) clamp(1rem, 4vw, 2.8rem) clamp(2.5rem, 7vw, 6rem);
     display: grid;
-    gap: clamp(4rem, 7vw, 6rem);
+    gap: clamp(2.1rem, 6vw, 5.5rem);
+    overflow-x: hidden;
   }
 
   .section-group {
     display: grid;
-    gap: clamp(1.8rem, 3.5vw, 2.8rem);
+    gap: clamp(1.5rem, 3.5vw, 2.6rem);
   }
 
   .section-divider {
     position: relative;
     height: 2px;
-    width: min(720px, 72%);
+    width: min(720px, 85%);
     margin: clamp(0.8rem, 1.8vw, 1.8rem) auto clamp(0.5rem, 1.4vw, 1.2rem);
     background: linear-gradient(90deg, transparent, rgba(124, 108, 255, 0.65), transparent);
     opacity: 0.55;
@@ -108,6 +110,3 @@ const experience = [
     border: 0;
   }
 </style>
-
-
-

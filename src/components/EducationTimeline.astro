@@ -110,13 +110,15 @@ const sectionId = `timeline-${(title ?? 'seccion').toLowerCase().replace(/\s+/g,
     display: grid;
     gap: clamp(1.6rem, 2.8vw, 2.4rem);
     position: relative;
+    max-width: 100%;
   }
 
   .timeline__list::before {
     content: "";
     position: absolute;
-    inset: 0;
-    margin-left: 0.8rem;
+    top: 0;
+    bottom: 0;
+    left: 0.8rem;
     width: 2px;
     background: rgba(148, 163, 184, 0.22);
     border-radius: 999px;
@@ -217,11 +219,36 @@ const sectionId = `timeline-${(title ?? 'seccion').toLowerCase().replace(/\s+/g,
 
   @media (max-width: 640px) {
     .timeline__list::before {
-      margin-left: 0.6rem;
+      left: 0.6rem;
     }
 
     .timeline__item {
       padding-left: 2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .timeline__list::before {
+      left: 0.5rem;
+    }
+
+    .timeline__item {
+      padding-left: 1.6rem;
+    }
+
+    .timeline-card {
+      padding: 1.15rem 1.2rem;
+    }
+
+    .timeline-card__header {
+      align-items: flex-start;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .timeline__header {
+      text-align: left;
+      margin-inline: 0;
     }
   }
 </style>
