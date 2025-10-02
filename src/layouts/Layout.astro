@@ -26,44 +26,105 @@ const { title } = Astro.props;
       rel="stylesheet"
     />
 
-    <!-- ⚠️ Recomendado: usa la integración oficial de Tailwind en Astro.
-         Si sigues con CDN, mejor CDNs modernos o tu build local.
-         Mantengo tu CDN actual por compatibilidad: -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-
     <style>
-      :root { color-scheme: dark; }
+      :root {
+        color-scheme: dark;
+        --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        --font-heading: 'DM Sans', 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+        --surface-0: #0b1220;
+        --surface-1: #111b2f;
+        --surface-2: #16223b;
+        --surface-card: rgba(17, 27, 47, 0.85);
+        --text-0: #f1f5f9;
+        --text-1: #cbd5f5;
+        --text-2: #94a3c4;
+        --accent: #7c8cff;
+        --accent-strong: #5565ff;
+        --border-subtle: rgba(148, 163, 184, 0.22);
+        --ring: rgba(99, 102, 241, 0.55);
+        --shadow-lg: 0 20px 45px rgba(6, 12, 24, 0.45);
+        --transition: 180ms ease;
+        --radius-lg: 1rem;
+        --radius-md: 0.75rem;
+        --radius-pill: 999px;
+      }
+
+      *, *::before, *::after { box-sizing: border-box; }
       html, body { height: 100%; }
+
       body {
-        font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-        line-height: 1.5;
+        margin: 0;
+        min-height: 100%;
+        background: var(--surface-0);
+        color: var(--text-0);
+        font-family: var(--font-body);
+        line-height: 1.6;
         text-rendering: optimizeLegibility;
-      }
-      h1, h2, h3 { font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif; }
-      .dark {
-        --tw-bg-opacity: 1;
-        background-color: rgb(15 23 42 / var(--tw-bg-opacity)); /* slate-900 */
-        --tw-text-opacity: 1;
-        color: rgb(226 232 240 / var(--tw-text-opacity));        /* slate-200 */
+        -webkit-font-smoothing: antialiased;
       }
 
-      /* Skip link visible al enfocar con teclado */
+      h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.01em; }
+      h1 { font-weight: 800; }
+      h2, h3, h4 { font-weight: 700; }
+
+      p { color: var(--text-2); max-width: 65ch; }
+      strong { color: inherit; }
+
+      a {
+        color: var(--text-1);
+        text-decoration: underline;
+        text-decoration-color: rgba(124,108,255,0.45);
+        text-decoration-thickness: 2px;
+        text-underline-offset: 0.22em;
+        transition: color var(--transition), text-decoration-color var(--transition);
+      }
+      a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+      a:focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 4px;
+        border-radius: 0.375rem;
+      }
+
+      button {
+        font-family: inherit;
+        color: inherit;
+      }
+
+      ::selection { background: rgba(124,108,255,0.55); color: #fff; }
+
+      /* Skip link visible al usar teclado */
       .skip-link {
-        position: absolute; left: 0.5rem; top: 0.5rem;
-        padding: 0.5rem 0.75rem; border-radius: 0.5rem;
-        background: #111827; color: #fff; transform: translateY(-150%);
+        position: absolute;
+        left: 0.75rem;
+        top: 0.75rem;
+        padding: 0.55rem 0.85rem;
+        border-radius: 0.65rem;
+        background: rgba(6, 10, 23, 0.9);
+        color: var(--text-0);
+        box-shadow: 0 18px 40px rgba(8, 9, 20, 0.4);
+        transform: translateY(-150%);
+        transition: transform 0.18s ease;
       }
-      .skip-link:focus { transform: translateY(0); outline: 2px solid #a78bfa; }
+      .skip-link:focus { transform: translateY(0); }
 
-      /* Safe areas en iPhone con notch */
-      main { padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right)); }
+      /* Safe areas en dispositivos con notch */
+      main {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
     </style>
   </head>
 
-  <body class="dark:bg-gray-900 dark:text-gray-200 antialiased">
+  <body>
     <a href="#main-content" class="skip-link">Saltar al contenido</a>
 
     <!-- Landmark principal -->

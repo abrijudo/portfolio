@@ -1,79 +1,315 @@
 ---
 const name = "Abraham Alvarez Leal";
-const title = "Desarrollador web, multiplataforma y experto en accesibilidad web";
-const introPhrase = "Transformando ideas en código funcional y escalable.";
-const imageUrl = "/fotoPerfil.avif"; 
+const title = "Desarrollador web y especialista en accesibilidad";
+const intro = "Ayudo a equipos a lanzar experiencias digitales inclusivas, cumplidoras de WCAG y con un rendimiento sólido desde el primer despliegue.";
+const imageUrl = "/fotoPerfil.avif";
 
 const email = "abrahamsenshi@gmail.com";
-const subject = "Oportunidad de trabajo";
+const subject = "Oportunidad de colaboración";
 const body = "Hola Abraham,\nme gustaría contactar contigo para un proyecto.";
 
-// 1. URL para APLICACIÓN MÓVIL (Usa el protocolo 'googlegmail://' para Android/iOS)
-// Si el usuario no tiene la app instalada, fallará, por eso usamos JS como fallback al mailto
-const gmailAppUrl = `googlegmail:///co?to=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-// 2. URL para ESCRITORIO (La que tú quieres: abre el popup en la bandeja de entrada)
-// Nota: 'compose=new' ya implica que abra el redactor
-const gmailWebUrl = `https://mail.google.com/mail/u/0/#inbox?compose=new&to=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-// 3. URL de Fallback universal si el JS no carga
 const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 ---
 
-<section class="relative bg-gradient-to-br from-indigo-900 to-gray-900 text-white rounded-xl p-8 md:p-12 mb-12 shadow-2xl overflow-hidden animate-fade-in">
-  <div class="relative z-10 flex flex-col md:flex-row items-center md:justify-between text-center md:text-left">
-    <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
-      <img
-        src="/fotoPerfil.avif"
-        alt="Abraham Alvarez Leal"
-        class="w-32 h-32 rounded-full object-cover border-4 border-purple-500 shadow-lg animate-pop-in"
-      />
-      <div>
-        <h1 class="text-4xl md:text-5xl font-extrabold mb-2 leading-tight tracking-wider animate-slide-up">
-          Abraham Alvarez Leal
-        </h1>
-        <p class="text-xl md:text-2xl text-purple-300 mb-4 animate-slide-up delay-100">
-          Desarrollador web, multiplataforma y experto en accesibilidad web
-        </p>
-        <p class="text-lg text-gray-300 italic animate-fade-in delay-200">
-          "Transformando ideas en código funcional y escalable."
-        </p>
-      </div>
-    </div>
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__container">
+    <div class="hero__content">
+      <p class="hero__eyebrow">Accesibilidad · Rendimiento · Multiplataforma</p>
+      <h1 id="hero-title" class="hero__title">
+        <span class="hero__name">{name}</span>
+      </h1>
+      <p class="hero__subtitle">{title}</p>
+      <p class="hero__intro">{intro}</p>
 
-        <a
-      id="hire-me-button"
-      href={mailto} 
-      class="mt-8 md:mt-0 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-75"
-    >
-      Contrátame
-    </a>
-  </div>
+      <ul class="hero__highlights" aria-label="Áreas de enfoque">
+        <li>Auditorías WCAG 2.1 AA con planes accionables.</li>
+        <li>Desarrollo front-end y multiplataforma orientado a rendimiento.</li>
+        <li>Formación y documentación para equipos inclusivos.</li>
+      </ul>
+
+      <div class="hero__actions" role="group" aria-label="Acciones principales">
+        <a
+          id="hire-me-button"
+          href={mailto}
+          class="hero__button hero__button--primary"
+          rel="noopener noreferrer"
+        >
+          Escríbeme
+        </a>
+        <a href="#portfolio" class="hero__button hero__button--secondary">
+          Ver proyectos
+        </a>
+      </div>
+
+      <dl class="hero__metrics">
+        <div>
+          <dt>Años de experiencia</dt>
+          <dd>3+</dd>
+        </div>
+        <div>
+          <dt>Auditorías WCAG</dt>
+          <dd>20+ completadas</dd>
+        </div>
+        <div>
+          <dt>Ubicación</dt>
+          <dd>Asturias · España</dd>
+        </div>
+      </dl>
+    </div>
+
+    <aside class="hero__aside" aria-label="Información destacada">
+      <figure class="hero__card">
+        <div class="hero__avatar">
+          <img src={imageUrl} alt={name} loading="lazy" decoding="async" />
+        </div>
+        <figcaption class="hero__card-body">
+          <p class="hero__card-heading">Disponible para proyectos remotos e híbridos.</p>
+          <p class="hero__card-text">
+            Trabajo con herramientas como axe, WAVE, Lighthouse, Playwright y Cypress para asegurar calidad y accesibilidad continua.
+          </p>
+        </figcaption>
+      </figure>
+    </aside>
+  </div>
 </section>
 
-<script define:vars={{ gmailAppUrl, gmailWebUrl }}>
-  (() => {
-    const btn = document.getElementById("hire-me-button");
-    if (!btn) return;
-    
-    // Función simple de detección de dispositivo móvil
-    const isMobile = () => /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
-  
-    btn.addEventListener("click", (e) => {
-      e.preventDefault(); 
+<script define:vars={{ gmailWebUrl, mailto }}>
+  (() => {
+    const button = document.getElementById("hire-me-button");
+    if (!button) return;
 
-      let targetUrl;
+    button.addEventListener("click", (event) => {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobi/i.test(navigator.userAgent || "");
+      if (isMobile) return;
 
-      if (isMobile()) {
-          // Móvil: intenta abrir la app nativa de Gmail
-          targetUrl = gmailAppUrl;
-      } else {
-          // Escritorio: abre la URL de Gmail web
-          targetUrl = gmailWebUrl;
-      }
-      
-      // Abrimos la URL en una nueva pestaña/ventana.
-      window.open(targetUrl, "_blank", "noopener,noreferrer"); 
-    });
-  })();
+      event.preventDefault();
+      const newTab = window.open(gmailWebUrl, "_blank", "noopener,noreferrer");
+      if (!newTab) window.location.href = mailto;
+    });
+  })();
 </script>
+
+<style>
+  .hero {
+    background: var(--surface-1);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    box-shadow: var(--shadow-lg);
+    padding: clamp(2.4rem, 5vw, 3.8rem);
+  }
+
+  .hero__container {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+
+  @media (min-width: 960px) {
+    .hero__container {
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    }
+  }
+
+  .hero__content {
+    display: grid;
+    gap: clamp(1.2rem, 2vw, 1.8rem);
+  }
+
+  .hero__eyebrow {
+    margin: 0;
+    font-size: 0.82rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(148, 163, 184, 0.7);
+  }
+
+  .hero__title {
+    margin: 0;
+    font-size: clamp(1.35rem, 4vw, 3.4rem);
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--text-0);
+    white-space: nowrap;
+  }
+
+  .hero__name {
+    display: inline-block;
+    max-width: 100%;
+    text-shadow: 0 18px 40px rgba(6, 10, 23, 0.6);
+  }
+
+  .hero__subtitle {
+    margin: 0;
+    font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+    color: var(--text-1);
+    font-weight: 600;
+  }
+
+  .hero__intro {
+    margin: 0;
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
+    color: rgba(226, 232, 240, 0.9);
+  }
+
+  .hero__highlights {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+    color: var(--text-2);
+    font-size: 0.95rem;
+  }
+
+  .hero__highlights li {
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-start;
+  }
+
+  .hero__highlights li::before {
+    content: "";
+    flex: none;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    align-items: center;
+  }
+
+  .hero__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.78rem 1.6rem;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: transform var(--transition), background var(--transition), color var(--transition), border-color var(--transition);
+  }
+
+  .hero__button:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 4px;
+  }
+
+  .hero__button--primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: rgba(124, 140, 255, 0.4);
+  }
+
+  .hero__button--primary:hover { transform: translateY(-1px); }
+
+  .hero__button--secondary {
+    background: rgba(22, 34, 59, 0.8);
+    color: var(--text-0);
+    border-color: rgba(124, 140, 255, 0.2);
+  }
+
+  .hero__button--secondary:hover { border-color: rgba(124, 140, 255, 0.35); }
+
+  .hero__metrics {
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    padding: 1.1rem;
+    border-radius: var(--radius-md);
+    background: var(--surface-2);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+  }
+
+  .hero__metrics div { display: grid; gap: 0.25rem; }
+  .hero__metrics dt { font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(148, 163, 184, 0.7); }
+  .hero__metrics dd { margin: 0; font-weight: 600; color: var(--text-1); }
+
+  .hero__aside {
+    display: flex;
+    justify-content: center;
+  }
+
+  .hero__card {
+    margin: 0;
+    width: clamp(14rem, 42vw, 18rem);
+    background: var(--surface-card);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    overflow: hidden;
+    display: grid;
+  }
+
+  .hero__avatar {
+    aspect-ratio: 4 / 5;
+    background: radial-gradient(circle at top, rgba(124, 140, 255, 0.18), transparent 70%);
+    position: relative;
+    border-radius: inherit;
+  }
+
+  .hero__avatar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent, rgba(6, 10, 23, 0.35));
+    pointer-events: none;
+  }
+
+  .hero__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: contrast(1.05) saturate(1.05) brightness(1.02);
+    image-rendering: optimizeQuality;
+    transform: translateZ(0);
+  }
+
+  @media (max-width: 540px) {
+    .hero__title {
+      font-size: clamp(1.2rem, 6vw, 2.4rem);
+    }
+  }
+
+  .hero__card-body {
+    padding: 1.4rem;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .hero__card-heading {
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-0);
+    font-size: 1rem;
+  }
+
+  .hero__card-text {
+    margin: 0;
+    color: var(--text-2);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 720px) {
+    .hero {
+      padding: 2rem 1.6rem;
+    }
+
+    .hero__metrics {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+
+
+
+
+

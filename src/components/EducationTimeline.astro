@@ -8,322 +8,220 @@ interface Props {
 
 const { items = [], title = "Formación" } = Astro.props;
 
-// Ordena por año ascendente
 const toYear = (v?: string) => parseInt((v ?? "").replace(/\D/g, "")) || -Infinity;
 const list = [...items].sort((a, b) => toYear(a.start) - toYear(b.start));
-
-// Agrupa en filas de 2 (left/right)
-const rows: [TimelineItem, TimelineItem?][] = [];
-for (let i = 0; i < list.length; i += 2) rows.push([list[i], list[i + 1]]);
-
-// ID único por sección
-const sectionId =
-  `timeline-${(title ?? 'seccion').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '')}`;
+const sectionId = `timeline-${(title ?? 'seccion').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '')}`;
 ---
 
 <section id={sectionId} class="timeline" aria-labelledby={`${sectionId}-title`}>
-  <h2 id={`${sectionId}-title`} class="timeline__title">{title}</h2>
+  <header class="timeline__header">
+    <p class="timeline__eyebrow">Trayectoria</p>
+    <h2 id={`${sectionId}-title`} class="timeline__title">{title}</h2>
+    <p class="timeline__lead">Experiencias ordenadas cronológicamente, con foco en accesibilidad y desarrollo multiplataforma.</p>
+  </header>
 
-  <div class="timeline-grid">
-    {rows.map((pair, rowIdx) => (
-      <div class="timeline-row" role="list" aria-label={`Fila ${rowIdx + 1}`}>
-        {/* LEFT */}
-        <div class="col left">
-          {pair[0] && (
-            <article role="listitem" class="card" style={`--delay:${(rowIdx % 3) * 90}ms;`} aria-label={`Hito: ${pair[0].title}`}>
-              <header class="card__head">
-                <div class="dates">
-                  {pair[0].end && pair[0].end !== pair[0].start ? (
-                    <>
-                      <time datetime={pair[0].start}>{pair[0].start}</time>
-                      <span aria-hidden="true">—</span>
-                      <time datetime={pair[0].end}>{pair[0].end}</time>
-                    </>
-                  ) : (
-                    <time datetime={pair[0].start}>{pair[0].start}</time>
-                  )}
-                </div>
-                <h3 class="card__title">{pair[0].title}</h3>
-                <p class="card__where">
-                  {pair[0].link ? (
-                    <a href={pair[0].link} target="_blank" rel="noopener noreferrer" class="card__link">
-                      {pair[0].center}
-                    </a>
-                  ) : pair[0].center}
-                  {pair[0].location && <span class="card__loc"> · {pair[0].location}</span>}
-                </p>
-              </header>
-              {pair[0].description && <p class="card__desc">{pair[0].description}</p>}
-              {pair[0].tags?.length && (
-                <div class="tags" aria-label="Tecnologías">
-                  {pair[0].tags.map((t) => <span class="tag">{t}</span>)}
-                </div>
-              )}
-            </article>
-          )}
-        </div>
+  <ol class="timeline__list">
+    {list.map((item) => {
+      const hasRange = item.end && item.end !== item.start;
+      const timelineLabel = hasRange ? `${item.start} – ${item.end}` : item.start;
 
-        {/* RIGHT (puede no existir) */}
-        <div class="col right">
-          {pair[1] && (
-            <article role="listitem" class="card" style={`--delay:${(rowIdx % 3) * 90}ms;`} aria-label={`Hito: ${pair[1].title}`}>
-              <header class="card__head">
-                <div class="dates">
-                  {pair[1].end && pair[1].end !== pair[1].start ? (
+      return (
+        <li class="timeline__item">
+          <article class="timeline-card" aria-label={`${item.title} (${timelineLabel})`}>
+            <header class="timeline-card__header">
+              <span class="timeline-card__dot" aria-hidden="true"></span>
+              <div>
+                <p class="timeline-card__dates">
+                  <time datetime={item.start}>{item.start}</time>
+                  {hasRange && (
                     <>
-                      <time datetime={pair[1].start}>{pair[1].start}</time>
                       <span aria-hidden="true">—</span>
-                      <time datetime={pair[1].end}>{pair[1].end}</time>
+                      <time datetime={item.end}>{item.end}</time>
                     </>
-                  ) : (
-                    <time datetime={pair[1].start}>{pair[1].start}</time>
                   )}
-                </div>
-                <h3 class="card__title">{pair[1].title}</h3>
-                <p class="card__where">
-                  {pair[1].link ? (
-                    <a href={pair[1].link} target="_blank" rel="noopener noreferrer" class="card__link">
-                      {pair[1].center}
-                    </a>
-                  ) : pair[1].center}
-                  {pair[1].location && <span class="card__loc"> · {pair[1].location}</span>}
                 </p>
-              </header>
-              {pair[1].description && <p class="card__desc">{pair[1].description}</p>}
-              {pair[1].tags?.length && (
-                <div class="tags" aria-label="Tecnologías">
-                  {pair[1].tags.map((t) => <span class="tag">{t}</span>)}
-                </div>
+                <h3 class="timeline-card__title">{item.title}</h3>
+              </div>
+            </header>
+
+            <p class="timeline-card__org">
+              {item.link ? (
+                <a href={item.link} target="_blank" rel="noopener noreferrer" class="timeline-card__link">
+                  {item.center}
+                </a>
+              ) : (
+                item.center
               )}
-            </article>
-          )}
-        </div>
-      </div>
-    ))}
-  </div>
+              {item.location && <span class="timeline-card__loc"> · {item.location}</span>}
+            </p>
+
+            {item.description && <p class="timeline-card__description">{item.description}</p>}
+
+            {item.tags?.length && (
+              <ul class="timeline-card__tags" aria-label="Tecnologías">
+                {item.tags.map((tag) => <li>{tag}</li>)}
+              </ul>
+            )}
+          </article>
+        </li>
+      );
+    })}
+  </ol>
 </section>
 
-<script is:inline>
-  (() => {
-    const prefersReduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  
-    // Ajusta el espacio mínimo real entre LEFT(bottom) y RIGHT(top) de la misma fila
-    const MIN_GAP = 24;   // px de separación mínima (súbelo a 28–32 si quieres más aire)
-    const SAFE_EXTRA = 16; // reserva extra bajo la fila para que nada se solape
-  
-    const alignDesktopRows = () => {
-      const isDesktop = matchMedia("(min-width: 768px)").matches;
-  
-      document.querySelectorAll(".timeline-row").forEach((row) => {
-        const left  = row.querySelector(".col.left  .card");
-        const rcol  = row.querySelector(".col.right");
-        const right = row.querySelector(".col.right .card");
-  
-        // limpiar estado previo
-        if (rcol) rcol.style.transform = "";
-        row.style.paddingBottom = "";
-  
-        if (!isDesktop || !left || !rcol || !right) return;
-  
-        const rowRect  = row.getBoundingClientRect();
-        const lRect    = left.getBoundingClientRect();
-        const rRect    = right.getBoundingClientRect();
-  
-        const leftTop    = lRect.top  - rowRect.top;
-        const leftBottom = lRect.bottom - rowRect.top;
-        const rightTop0  = rRect.top  - rowRect.top;
-  
-        // Punto de la izquierda de ESTA fila (para línea)
-        const dotL1 = leftTop + 22;
-  
-        // Izquierda de la SIGUIENTE fila (si existe) para centrar el punto derecho entre ambas
-        const nextRow  = row.nextElementSibling?.classList?.contains("timeline-row")
-          ? row.nextElementSibling
-          : null;
-        const nextLeft = nextRow?.querySelector(".col.left .card");
-        const dotL2    = nextLeft
-          ? (nextLeft.getBoundingClientRect().top - rowRect.top) + 22
-          : null;
-  
-        // Deseo 1: centrar el punto derecho entre dotL1 y dotL2
-        let desiredTopForMid = null;
-        if (dotL2 !== null) {
-          const mid = (dotL1 + dotL2) / 2;   // punto medio
-          desiredTopForMid = mid - 22;       // top de la RIGHT card para que su punto (22px) caiga en 'mid'
-        }
-  
-        // Deseo 2: asegurar distancia mínima respecto a la LEFT card de la MISMA fila
-        const desiredTopForGap = leftBottom + MIN_GAP;
-  
-        // Top objetivo final de RIGHT (elige el mayor para cumplir ambos requisitos)
-        const targetTop = Math.max(
-          desiredTopForGap,
-          desiredTopForMid !== null ? desiredTopForMid : rightTop0 // si no hay nextLeft, mantenemos su top actual
-        );
-  
-        // Desplazamiento necesario (no negativo)
-        const offsetY = Math.max(0, targetTop - rightTop0);
-  
-        // Aplica el desplazamiento visual
-        rcol.style.transform = `translateY(${offsetY}px)`;
-  
-        // Reserva altura real bajo la fila para que la RIGHT no pise a la siguiente
-        const reserve = Math.max(0, offsetY + SAFE_EXTRA);
-        row.style.paddingBottom = `${reserve}px`;
-      });
-    };
-  
-    const initReveal = (root) => {
-      const section = root || document;
-      const grid = section.querySelector(".timeline-grid");
-      const cards = section.querySelectorAll(":scope .card");
-  
-      const show = (el) => { if (el instanceof HTMLElement) el.classList.add("is-visible"); };
-      const hide = (el) => { if (el instanceof HTMLElement) el.classList.remove("is-visible"); };
-  
-      const updateLine = () => {
-        if (!grid) return;
-        const rect = grid.closest(".timeline")?.getBoundingClientRect() || grid.getBoundingClientRect();
-        const vh = innerHeight;
-        const start = vh * 0.15;
-        const total = rect.height + start;
-        const scrolled = Math.min(total, Math.max(0, start - rect.top));
-        const pct = Math.max(0, Math.min(100, (scrolled / total) * 100));
-        grid.style.setProperty("--lineProgress", pct.toFixed(2) + "%");
-      };
-  
-      if (prefersReduced) {
-        cards.forEach((el) => { show(el); el.style.transition = "none"; });
-        updateLine();
-        return;
-      }
-  
-      if ("IntersectionObserver" in window) {
-        const io = new IntersectionObserver(
-          (entries) => entries.forEach((e) => e.isIntersecting ? show(e.target) : hide(e.target)),
-          { threshold: [0, 0.15, 0.5], rootMargin: "0px 0px -10% 0px" }
-        );
-        cards.forEach((el) => io.observe(el));
-      } else {
-        cards.forEach(show);
-      }
-  
-      updateLine();
-      addEventListener("scroll", updateLine, { passive: true });
-      addEventListener("resize", updateLine);
-    };
-  
-    const init = () => {
-      alignDesktopRows();
-      initReveal(document);
-    };
-  
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", init, { once: true });
-    } else {
-      requestAnimationFrame(init);
-    }
-  
-    // Recalcular cuando cambie el viewport o al cargar fuentes (alturas cambian)
-    addEventListener("resize", () => requestAnimationFrame(alignDesktopRows));
-    if ("fonts" in document) {
-      document.fonts.ready.then(() => requestAnimationFrame(alignDesktopRows));
-    }
-  })();
-  </script>
-  
-  
-
-
 <style>
-  :root{
-    --bg-card: rgba(24,26,36,.5);
-    --bg-card-2: rgba(24,26,36,.38);
-    --bd-card: rgba(255,255,255,.08);
-    --txt:#e7e9f2; --txt-soft:#9aa0aa;
-    --accent:#b38cff; --accent-2:#6ea8ff;
-    --shadow:0 18px 40px rgba(0,0,0,.45);
-    --shadow-hover:0 26px 60px rgba(0,0,0,.55);
-    --blur:8px;
-    --cg:1.75rem; --lineW:4px; --dot:10px;
+  .timeline {
+    display: grid;
+    gap: clamp(2.4rem, 4.5vw, 3.6rem);
   }
-  
-  .timeline__title{
-    font-size:clamp(1.5rem,2.4vw,2.6rem);
-    font-weight:900; margin:0 0 1.75rem 0;
-    background:linear-gradient(90deg,var(--accent),var(--accent-2));
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    text-align:center;
+
+  .timeline__header {
+    text-align: center;
+    display: grid;
+    gap: 0.75rem;
+    max-width: 44rem;
+    margin: 0 auto;
   }
-  
-  .timeline-grid{position:relative;display:grid;gap:1.5rem;}
-  .timeline-row{display:grid;grid-template-columns:1fr;gap:1.25rem;}
-  
-  @media (min-width:768px){
-    .timeline-grid{gap:2.25rem;}
-    .timeline-grid::before{
-      content:"";position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);
-      width:var(--lineW);border-radius:999px;
-      background:linear-gradient(to bottom,rgba(255,255,255,.18),rgba(120,120,140,.28) 35%,rgba(120,120,140,.18) 70%,rgba(120,120,140,.1));
-      box-shadow:0 0 16px rgba(129,95,255,.25), inset 0 0 18px rgba(129,95,255,.15);
+
+  .timeline__eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(203, 213, 225, 0.6);
+  }
+
+  .timeline__title {
+    margin: 0;
+    font-size: clamp(2rem, 3.2vw, 2.6rem);
+    color: rgba(236, 242, 255, 0.95);
+  }
+
+  .timeline__lead {
+    margin: 0;
+    color: rgba(203, 213, 225, 0.78);
+    font-size: clamp(0.95rem, 1.2vw, 1.08rem);
+  }
+
+  .timeline__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(1.6rem, 2.8vw, 2.4rem);
+    position: relative;
+  }
+
+  .timeline__list::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    margin-left: 0.8rem;
+    width: 2px;
+    background: rgba(148, 163, 184, 0.22);
+    border-radius: 999px;
+  }
+
+  .timeline__item {
+    position: relative;
+    padding-left: 2.5rem;
+  }
+
+  .timeline-card {
+    background: var(--surface-1);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: var(--radius-md);
+    padding: clamp(1.3rem, 2.1vw, 1.8rem);
+    display: grid;
+    gap: 0.85rem;
+    box-shadow: 0 12px 28px rgba(6, 12, 24, 0.35);
+  }
+
+  .timeline-card__header {
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+  }
+
+  .timeline-card__dot {
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(124, 140, 255, 0.4);
+    position: relative;
+  }
+
+  .timeline-card__dates {
+    margin: 0;
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+    font-size: 0.84rem;
+    color: rgba(203, 213, 225, 0.78);
+  }
+
+  .timeline-card__dates span { color: rgba(148, 163, 184, 0.55); }
+
+  .timeline-card__title {
+    margin: 0;
+    font-size: clamp(1.08rem, 1.5vw, 1.3rem);
+    color: rgba(236, 242, 255, 0.94);
+  }
+
+  .timeline-card__org {
+    margin: 0;
+    color: rgba(203, 213, 225, 0.82);
+  }
+
+  .timeline-card__link {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: rgba(124, 108, 255, 0.4);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+  }
+
+  .timeline-card__link:hover {
+    color: var(--text-0);
+    text-decoration-color: rgba(124, 108, 255, 0.8);
+  }
+
+  .timeline-card__loc {
+    color: rgba(148, 163, 184, 0.6);
+  }
+
+  .timeline-card__description {
+    margin: 0;
+    color: rgba(209, 213, 233, 0.86);
+    line-height: 1.65;
+  }
+
+  .timeline-card__tags {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .timeline-card__tags li {
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.78rem;
+    background: rgba(17, 25, 46, 0.65);
+    border: 1px solid rgba(126, 134, 173, 0.3);
+    color: rgba(226, 232, 240, 0.85);
+  }
+
+  @media (max-width: 640px) {
+    .timeline__list::before {
+      margin-left: 0.6rem;
     }
-    .timeline-row{grid-template-columns:1fr 1fr;column-gap:var(--cg);row-gap:0;}
-  }
-  
-  .col:empty{display:none;}
-  @media (min-width:768px){
-    .col.left{grid-column:1;position:relative;}
-    .col.right{grid-column:2;position:relative;will-change:transform;} /* el JS ajusta translateY */
-    .col:empty{display:block;}
-  }
-  
-  .card{
-    position:relative;padding:1.25rem 1.35rem;border-radius:18px;color:var(--txt);
-    background:linear-gradient(180deg,var(--bg-card),var(--bg-card-2)),
-               radial-gradient(120% 120% at 0% 0%, rgba(179,140,255,.1), transparent 60%);
-    border:1px solid var(--bd-card);backdrop-filter:blur(var(--blur));
-    transform:translateY(18px) scale(.985);opacity:0;visibility:hidden;
-    will-change:transform,opacity;transition:opacity .6s ease, transform .6s ease, box-shadow .2s, border-color .2s;
-    box-shadow:var(--shadow);
-  }
-  .card:hover{box-shadow:var(--shadow-hover);border-color:rgba(179,140,255,.32);}
-  .card.is-visible{opacity:1;visibility:visible;transform:translateY(0) scale(1);}
-  
-  @media (min-width:768px){
-    .col.left .card::before,.col.right .card::before{
-      content:"";position:absolute;top:28px;height:2px;
-      background:linear-gradient(90deg,rgba(179,140,255,.75),rgba(179,140,255,.25));
-      width:calc(var(--cg)/2 + var(--lineW)/2);
+
+    .timeline__item {
+      padding-left: 2rem;
     }
-    .col.left .card::before{right:calc(-1 * (var(--cg)/2 + var(--lineW)/2));}
-    .col.right .card::before{left: calc(-1 * (var(--cg)/2 + var(--lineW)/2));}
-  
-    .col.left .card::after,.col.right .card::after{
-      content:"";position:absolute;top:22px;width:var(--dot);height:var(--dot);border-radius:50%;
-      background:radial-gradient(circle at 35% 35%,#fff,var(--accent) 45%,var(--accent));
-      box-shadow:0 0 0 3px rgba(179,140,255,.25), 0 0 14px rgba(179,140,255,.55);
-    }
-    .col.left .card::after{right:calc(-1 * (var(--cg)/2 + var(--lineW)/2));transform:translateX(50%);}
-    .col.right .card::after{left: calc(-1 * (var(--cg)/2 + var(--lineW)/2));transform:translateX(-50%);}
   }
-  
-  .card__head{margin-bottom:.25rem;}
-  .dates{display:inline-flex;gap:.5rem;align-items:center;color:var(--txt-soft);font-size:clamp(.85rem,1.2vw,.95rem);}
-  .card__title{margin:.25rem 0 0 0;font-weight:800;font-size:clamp(1rem,1.4vw,1.18rem);color:#dbc9ff;text-shadow:0 1px 0 rgba(0,0,0,.15);}
-  .card__where{color:var(--txt);margin:.15rem 0 0 0;}
-  .card__link{color:inherit;text-decoration:underline;text-decoration-color:rgba(179,140,255,.5);}
-  .card__link:hover,.card__link:focus-visible{text-decoration-color:rgba(179,140,255,.9);outline:none;}
-  .card__loc{color:var(--txt-soft);} .card__desc{margin-top:.7rem;line-height:1.6;color:var(--txt);}
-  
-  .tags{margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.5rem;}
-  .tag{display:inline-block;font-size:clamp(.7rem,1vw,.74rem);padding:.28rem .62rem;border-radius:999px;color:#f1ecff;
-       background:linear-gradient(180deg,rgba(179,140,255,.23),rgba(179,140,255,.14));border:1px solid rgba(179,140,255,.35);
-       box-shadow:inset 0 0 12px rgba(179,140,255,.15);}
-  
-  @media (prefers-reduced-motion:reduce){
-    .card{transition:none!important;transform:none!important;opacity:1!important;visibility:visible!important;}
-  }
-  </style>
-  
-  
-  
+</style>

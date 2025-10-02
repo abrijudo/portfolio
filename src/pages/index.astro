@@ -5,7 +5,6 @@ import PortfolioSection from '../components/PortfolioSection.astro';
 import EducationTimeline from "../components/EducationTimeline.astro";
 import type { TimelineItem } from "@/types/portfolio";
 
-// 📌 Formación
 const education = [
   { title: "Gestión Administrativa (Grado Medio)", center: "Colegio La Salle", start: "2018", end: "2020", description: "Formación en administración, gestión documental, ofimática y procesos empresariales.", tags: ["Administración", "Ofimática"] },
   { title: "Desarrollo de Aplicaciones Web (DAW)", center: "Tunivers Formación", start: "2021", end: "2023", description: "HTML5, CSS3, JavaScript, PHP y MySQL. Maquetación, backend y despliegue de aplicaciones web.", tags: ["HTML5","CSS3","JavaScript","PHP","MySQL"] },
@@ -13,7 +12,6 @@ const education = [
   { title: "Accesibilidad Web (300h)", center: "Fundación Integralia", start: "2025", end: "2025", description: "Buenas prácticas WCAG, auditorías y elaboración de informes IRA.", tags: ["WCAG","Lighthouse","WAVE","axe"] },
 ] satisfies TimelineItem[];
 
-// 📌 Experiencia
 const experience = [
   {
     title: "Ayuntamiento de Cangas del Narcea · Accesibilidad Web",
@@ -40,30 +38,76 @@ const experience = [
 ---
 
 <Layout title="Abraham Alvarez Leal - Desarrollador web, multiplataforma y experto en accesibilidad web">
-  <main class="container mx-auto px-4 py-8 sections-wrapper" id="main-content" role="main">
+  <main class="page" id="main-content" role="main">
     <Hero />
-    <PortfolioSection />
-    <div class="section-separator" role="separator" aria-hidden="true"></div>
-    <EducationTimeline items={experience} title="Experiencia" />
-    <div class="section-separator" role="separator" aria-hidden="true"></div>
-    <EducationTimeline items={education} title="Formación" />
+
+    <section class="section-group" aria-labelledby="section-projects">
+      <h2 id="section-projects" class="visually-hidden">Proyectos recientes</h2>
+      <PortfolioSection />
+    </section>
+
+    <div class="section-divider" role="separator" aria-hidden="true"></div>
+
+    <section class="section-group" aria-labelledby="section-experience">
+      <EducationTimeline items={experience} title="Experiencia" />
+    </section>
+
+    <div class="section-divider" role="separator" aria-hidden="true"></div>
+
+    <section class="section-group" aria-labelledby="section-education">
+      <EducationTimeline items={education} title="Formación" />
+    </section>
   </main>
 </Layout>
 
-
 <style>
-  h2.timeline__title { text-align: center; }
-
-  .sections-wrapper {
-    /* márgenes verticales un pelín mayores en pantallas grandes */
-    padding-top: clamp(2rem, 3vw, 4rem);
-    padding-bottom: clamp(2rem, 3vw, 4rem);
+  .page {
+    width: min(1120px, 100%);
+    margin: 0 auto;
+    padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 4vw, 2.8rem) clamp(4rem, 7vw, 6rem);
+    display: grid;
+    gap: clamp(4rem, 7vw, 6rem);
   }
 
-  .section-separator {
-    margin: clamp(3rem, 6vw, 6rem) 0 clamp(2rem, 4vw, 4rem);
+  .section-group {
+    display: grid;
+    gap: clamp(1.8rem, 3.5vw, 2.8rem);
+  }
+
+  .section-divider {
+    position: relative;
     height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(179,140,255,0.6), transparent);
+    width: min(720px, 72%);
+    margin: clamp(0.8rem, 1.8vw, 1.8rem) auto clamp(0.5rem, 1.4vw, 1.2rem);
+    background: linear-gradient(90deg, transparent, rgba(124, 108, 255, 0.65), transparent);
+    opacity: 0.55;
     border-radius: 999px;
   }
+
+  .section-divider::after {
+    content: "";
+    position: absolute;
+    inset: auto 50% -0.7rem;
+    transform: translateX(-50%);
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124, 108, 255, 0.9), rgba(124, 108, 255, 0.4));
+    box-shadow: 0 0 12px rgba(124, 108, 255, 0.55);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 </style>
+
+
+
