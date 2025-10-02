@@ -8,10 +8,16 @@ const email = "abrahamsenshi@gmail.com";
 const subject = "Oportunidad de trabajo";
 const body = "Hola Abraham,\nme gustaría contactar contigo para un proyecto.";
 
-const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+// 1. URL para APLICACIÓN MÓVIL (Usa el protocolo 'googlegmail://' para Android/iOS)
+// Si el usuario no tiene la app instalada, fallará, por eso usamos JS como fallback al mailto
+const gmailAppUrl = `googlegmail:///co?to=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-// CAMBIO AQUÍ: Eliminamos el &fs=1 para que se abra el popup en lugar de la vista completa
-const gmailWeb = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+// 2. URL para ESCRITORIO (La que tú quieres: abre el popup en la bandeja de entrada)
+// Nota: 'compose=new' ya implica que abra el redactor
+const gmailWebUrl = `https://mail.google.com/mail/u/0/#inbox?compose=new&to=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+// 3. URL de Fallback universal si el JS no carga
+const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 ---
 
 <section class="relative bg-gradient-to-br from-indigo-900 to-gray-900 text-white rounded-xl p-8 md:p-12 mb-12 shadow-2xl overflow-hidden animate-fade-in">
@@ -35,24 +41,39 @@ const gmailWeb = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(
       </div>
     </div>
 
-    <a
-      id="hire-me"
+        <a
+      id="hire-me-button"
       href={mailto} 
       class="mt-8 md:mt-0 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-75"
     >
-      Contáctame
+      Contrátame
     </a>
   </div>
 </section>
 
-<script define:vars={{ gmailWeb }}>
+<script define:vars={{ gmailAppUrl, gmailWebUrl }}>
   (() => {
-    const btn = document.getElementById("hire-me");
+    const btn = document.getElementById("hire-me-button");
     if (!btn) return;
+    
+    // Función simple de detección de dispositivo móvil
+    const isMobile = () => /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
   
     btn.addEventListener("click", (e) => {
       e.preventDefault(); 
-      window.open(gmailWeb, "_blank", "noopener,noreferrer"); 
+
+      let targetUrl;
+
+      if (isMobile()) {
+          // Móvil: intenta abrir la app nativa de Gmail
+          targetUrl = gmailAppUrl;
+      } else {
+          // Escritorio: abre la URL de Gmail web
+          targetUrl = gmailWebUrl;
+      }
+      
+      // Abrimos la URL en una nueva pestaña/ventana.
+      window.open(targetUrl, "_blank", "noopener,noreferrer"); 
     });
   })();
 </script>
