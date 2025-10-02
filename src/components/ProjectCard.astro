@@ -1,13 +1,5 @@
 ---
-interface Project {
-  title: string;
-  description: string;
-  stack?: string[];         
-  backend?: string;          
-  deploy?: string;          
-  demoUrl?: string;          
-  repoUrl?: string;          
-}
+import type { Project } from "@/types/portfolio";
 
 interface Props {
   project: Project;
@@ -19,13 +11,12 @@ const stackLine = [
   project.stack?.join(" + "),
   project.backend ? `Backend: ${project.backend}` : undefined,
   project.deploy ? `Deploy: ${project.deploy}` : undefined,
-]
-  .filter(Boolean)
-  .join(" · ");
+].filter(Boolean).join(" · ");
 ---
 
+
 <article
-  class="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-2 flex flex-col h-full animate-slide-up"
+  class="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-2 flex flex-col h-full animate-slide-up focus-within:ring-2 focus-within:ring-purple-400/60"
   style={`animation-delay: ${delay}ms;`}
   aria-label={`Proyecto: ${project.title}`}
 >
@@ -33,29 +24,29 @@ const stackLine = [
     {stackLine && (
       <div class="flex flex-wrap gap-2 mb-3">
         {project.stack && (
-          <span class="inline-flex items-center gap-2 bg-purple-600/20 text-purple-200 text-xs font-semibold px-3 py-1 rounded-full">
+          <span class="inline-flex items-center gap-2 bg-purple-600/20 text-purple-100 text-xs font-semibold px-3 py-1 rounded-full">
             Stack: {project.stack.join(" + ")}
           </span>
         )}
         {project.backend && (
-          <span class="inline-flex items-center gap-2 bg-emerald-600/20 text-emerald-200 text-xs font-semibold px-3 py-1 rounded-full">
+          <span class="inline-flex items-center gap-2 bg-emerald-600/20 text-emerald-100 text-xs font-semibold px-3 py-1 rounded-full">
             Backend: {project.backend}
           </span>
         )}
         {project.deploy && (
-          <span class="inline-flex items-center gap-2 bg-blue-600/20 text-blue-200 text-xs font-semibold px-3 py-1 rounded-full">
+          <span class="inline-flex items-center gap-2 bg-blue-600/20 text-blue-100 text-xs font-semibold px-3 py-1 rounded-full">
             Deploy: {project.deploy}
           </span>
         )}
       </div>
     )}
 
-    <h3 class="text-2xl font-extrabold text-purple-300">
+    <h3 class="font-extrabold text-purple-200" style="font-size: clamp(1.125rem, 1.5vw, 1.375rem);">
       {project.title}
     </h3>
   </header>
 
-  <p class="text-gray-300/95 leading-relaxed flex-grow">
+  <p class="text-gray-200/95 leading-relaxed flex-grow" style="font-size: clamp(0.95rem, 1.2vw, 1.05rem);">
     {project.description}
   </p>
 
@@ -65,7 +56,7 @@ const stackLine = [
         href={project.demoUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 text-blue-300 hover:text-blue-200 font-semibold"
+        class="inline-flex items-center gap-2 text-blue-300 hover:text-blue-200 font-semibold px-3 py-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
         aria-label={`Abrir demo de ${project.title}`}
       >
         Ver página
@@ -81,7 +72,7 @@ const stackLine = [
         href={project.repoUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="ml-auto text-gray-400 hover:text-white"
+        class="ml-auto text-gray-300 hover:text-white p-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
         aria-label={`Abrir repositorio de ${project.title} en GitHub`}
         title="GitHub"
       >
@@ -93,3 +84,8 @@ const stackLine = [
     )}
   </footer>
 </article>
+
+<style>
+  @keyframes slideUp { from { opacity: 0; transform: translateY(18px) scale(.985);} to { opacity: 1; transform: translateY(0) scale(1);} }
+  .animate-slide-up { animation: slideUp .6s ease-out forwards; }
+</style>

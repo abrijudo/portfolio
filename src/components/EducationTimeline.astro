@@ -1,32 +1,27 @@
 ---
-interface Item {
-  title: string;
-  center: string;
-  location?: string;
-  start: string;
-  end?: string;
-  description?: string;
-  tags?: string[];
-  link?: string;
-}
+import type { TimelineItem } from "../types/portfolio"; // ruta relativa (opción B)
+
 interface Props {
-  items: Item[];
+  items: TimelineItem[];
   title?: string;
 }
 
 const { items = [], title = "Formación" } = Astro.props;
 
-// 1) Ordena por año ascendente
-const toYear = (v?: string) =>
-  parseInt((v ?? "").replace(/\D/g, "")) || -Infinity;
-const sorted = [...items].sort((a, b) => toYear(a.start) - toYear(b.start));
+// Ordena por año ascendente
+const toYear = (v?: string) => parseInt((v ?? "").replace(/\D/g, "")) || -Infinity;
+const itemsList = [...items].sort((a, b) => toYear(a.start) - toYear(b.start));
 
-// 2) Alternar lado: una tarjeta por fila (izquierda, derecha, izquierda, ...)
-const itemsList = sorted;
+// ID único por sección (evita colisiones)
+const sectionId =
+  `timeline-${(title ?? 'seccion')
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9\-]/g, '')}`;
 ---
 
-<section id="edu-timeline" class="timeline">
-  <h2 class="timeline__title">{title}</h2>
+<section id={sectionId} class="timeline" aria-labelledby={`${sectionId}-title`}>
+  <h2 id={`${sectionId}-title`} class="timeline__title">{title}</h2>
 
   <div class="timeline-grid">
     {
@@ -145,79 +140,65 @@ const itemsList = sorted;
   </div>
 </section>
 
-<!-- Reveal on scroll (JS puro, sin TypeScript) -->
+<!-- Script: recorre TODAS las secciones .timeline -->
 <script is:inline>
-  (() => {
-    const init = () => {
-      const prefersReduced = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
-      const section = document.getElementById("edu-timeline");
-      const grid = section ? section.querySelector(".timeline-grid") : null;
-      const cards = (section ?? document).querySelectorAll(".timeline .card");
+(() => {
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const sections = document.querySelectorAll(".timeline");
 
-      const show = (el) => {
-        if (el instanceof HTMLElement) el.classList.add("is-visible");
-      };
-      const hide = (el) => {
-        if (el instanceof HTMLElement) el.classList.remove("is-visible");
-      };
+  sections.forEach((section) => {
+    const grid = section.querySelector(".timeline-grid");
+    const cards = section.querySelectorAll(".timeline .card");
 
-      const updateLine = () => {
-        if (!section || !grid) return;
-        const rect = section.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const start = vh * 0.15;
-        const total = rect.height + start;
-        const scrolled = Math.min(total, Math.max(0, start - rect.top));
-        const pct = Math.max(0, Math.min(100, (scrolled / total) * 100));
-        grid.style.setProperty("--lineProgress", pct.toFixed(2) + "%");
-      };
+    const show = (el) => { if (el instanceof HTMLElement) el.classList.add("is-visible"); };
+    const hide = (el) => { if (el instanceof HTMLElement) el.classList.remove("is-visible"); };
 
-      if (prefersReduced) {
-        cards.forEach((el) => {
-          show(el);
-          el.style.transition = "none";
-        });
-        updateLine();
-        return;
-      }
-
-      if ("IntersectionObserver" in window) {
-        const io = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                show(entry.target);
-              } else {
-                hide(entry.target);
-              }
-            });
-          },
-          { threshold: [0, 0.15, 0.5], rootMargin: "0px 0px -10% 0px" }
-        );
-
-        cards.forEach((el) => io.observe(el));
-      } else {
-        cards.forEach(show);
-      }
-
-      updateLine();
-      window.addEventListener("scroll", updateLine, { passive: true });
-      window.addEventListener("resize", updateLine);
+    const updateLine = () => {
+      if (!grid) return;
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const start = vh * 0.15;
+      const total = rect.height + start;
+      const scrolled = Math.min(total, Math.max(0, start - rect.top));
+      const pct = Math.max(0, Math.min(100, (scrolled / total) * 100));
+      grid.style.setProperty("--lineProgress", pct.toFixed(2) + "%");
     };
 
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", init, { once: true });
-    } else {
-      requestAnimationFrame(init);
+    if (prefersReduced) {
+      cards.forEach(show);
+      updateLine();
+      return;
     }
-  })();
+
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => entry.isIntersecting ? show(entry.target) : hide(entry.target));
+        },
+        { threshold: [0, 0.15, 0.5], rootMargin: "0px 0px -10% 0px" }
+      );
+      cards.forEach((el) => io.observe(el));
+    } else {
+      cards.forEach(show);
+    }
+
+    updateLine();
+    window.addEventListener("scroll", updateLine, { passive: true });
+    window.addEventListener("resize", updateLine);
+  });
+})();
 </script>
 
+<!-- Noscript / fallback por si el JS falla -->
+<noscript>
+  <style>
+    .timeline .card { opacity: 1 !important; visibility: visible !important; transform: none !important; }
+  </style>
+</noscript>
+
 <style>
+  /* (puedes mantener exactamente tus estilos actuales) */
   :root {
-    /* Colores base y estética */
     --bg-card: rgba(24, 26, 36, 0.5);
     --bg-card-2: rgba(24, 26, 36, 0.38);
     --bd-card: rgba(255, 255, 255, 0.08);
@@ -225,23 +206,19 @@ const itemsList = sorted;
     --txt: #e7e9f2;
     --txt-soft: #9aa0aa;
 
-    --accent: #b38cff; /* lila */
-    --accent-2: #6ea8ff; /* azul */
+    --accent: #b38cff;
+    --accent-2: #6ea8ff;
 
     --shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
     --shadow-hover: 0 26px 60px rgba(0, 0, 0, 0.55);
     --blur: 8px;
 
-    /* Métricas para conectores */
-    --cg: 1.75rem; /* separación entre columnas */
-    --lineW: 4px; /* ancho línea central (::before) */
-    --dot: 10px; /* diámetro del punto */
+    --cg: 1.75rem;
+    --lineW: 4px;
+    --dot: 10px;
   }
 
-  /* Título */
-  .timeline {
-    width: 100%;
-  }
+  .timeline { width: 100%; }
   .timeline__title {
     font-size: clamp(2rem, 3vw, 2.6rem);
     font-weight: 900;
@@ -253,7 +230,6 @@ const itemsList = sorted;
     color: transparent;
   }
 
-  /* Grid */
   .timeline-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -266,7 +242,6 @@ const itemsList = sorted;
       grid-template-columns: 1fr 1fr;
       column-gap: var(--cg);
     }
-    /* Línea central */
     .timeline-grid::before {
       content: "";
       position: absolute;
@@ -289,37 +264,21 @@ const itemsList = sorted;
     }
   }
 
-  /* Columnas */
-  .item-col {
-    grid-column: 1;
-  }
+  .item-col { grid-column: 1; }
   @media (min-width: 768px) {
-    .item-col.left {
-      grid-column: 1;
-    }
-    .item-col.right {
-      grid-column: 2;
-    }
+    .item-col.left { grid-column: 1; }
+    .item-col.right { grid-column: 2; }
   }
 
-  /* Tarjetas */
   .card {
     position: relative;
     padding: 1.25rem 1.35rem;
     border-radius: 18px;
     color: var(--txt);
-
-    /* Glass */
     background: linear-gradient(180deg, var(--bg-card), var(--bg-card-2)),
-      radial-gradient(
-        120% 120% at 0% 0%,
-        rgba(179, 140, 255, 0.1),
-        transparent 60%
-      );
+      radial-gradient(120% 120% at 0% 0%, rgba(179, 140, 255, 0.1), transparent 60%);
     border: 1px solid var(--bd-card);
     backdrop-filter: blur(var(--blur));
-
-    /* Estado inicial (oculto) */
     transform: translateY(18px) scale(0.985);
     opacity: 0;
     visibility: hidden;
@@ -329,7 +288,6 @@ const itemsList = sorted;
       transform 0.6s ease,
       box-shadow 0.2s ease,
       border-color 0.2s ease;
-
     box-shadow: var(--shadow);
   }
   .card:hover {
@@ -342,7 +300,6 @@ const itemsList = sorted;
     transform: translateY(0) scale(1);
   }
 
-  /* Conectores hacia la línea central */
   @media (min-width: 768px) {
     .item-col.left .card::before,
     .item-col.right .card::before {
@@ -350,11 +307,7 @@ const itemsList = sorted;
       position: absolute;
       top: 28px;
       height: 2px;
-      background: linear-gradient(
-        90deg,
-        rgba(179, 140, 255, 0.75),
-        rgba(179, 140, 255, 0.25)
-      );
+      background: linear-gradient(90deg, rgba(179, 140, 255, 0.75), rgba(179, 140, 255, 0.25));
     }
     .item-col.left .card::before {
       right: calc(-1 * (var(--cg) / 2 + var(--lineW) / 2));
@@ -373,12 +326,7 @@ const itemsList = sorted;
       width: var(--dot);
       height: var(--dot);
       border-radius: 50%;
-      background: radial-gradient(
-        circle at 35% 35%,
-        #fff,
-        var(--accent) 45%,
-        var(--accent)
-      );
+      background: radial-gradient(circle at 35% 35%, #fff, var(--accent) 45%, var(--accent));
       box-shadow:
         0 0 0 3px rgba(179, 140, 255, 0.25),
         0 0 14px rgba(179, 140, 255, 0.55);
@@ -393,74 +341,24 @@ const itemsList = sorted;
     }
   }
 
-  /* Tipografía interna */
-  .card__head {
-    margin-bottom: 0.25rem;
-  }
-  .dates {
-    display: inline-flex;
-    gap: 0.5rem;
-    align-items: center;
-    color: var(--txt-soft);
-    font-size: 0.92rem;
-  }
-  .card__title {
-    margin: 0.25rem 0 0 0;
-    font-weight: 800;
-    font-size: 1.18rem;
-    color: #dbc9ff;
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
-  }
-  .card__where {
-    color: var(--txt);
-    margin: 0.15rem 0 0 0;
-  }
-  .card__link {
-    color: inherit;
-    text-decoration: underline;
-    text-decoration-color: rgba(179, 140, 255, 0.5);
-  }
-  .card__link:hover {
-    text-decoration-color: rgba(179, 140, 255, 0.9);
-  }
-  .card__loc {
-    color: var(--txt-soft);
-  }
-  .card__desc {
-    margin-top: 0.7rem;
-    line-height: 1.6;
-    color: var(--txt);
-  }
+  .card__head { margin-bottom: 0.25rem; }
+  .dates { display: inline-flex; gap: 0.5rem; align-items: center; color: var(--txt-soft); font-size: 0.92rem; }
+  .card__title { margin: 0.25rem 0 0 0; font-weight: 800; font-size: 1.18rem; color: #dbc9ff; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15); }
+  .card__where { color: var(--txt); margin: 0.15rem 0 0 0; }
+  .card__link { color: inherit; text-decoration: underline; text-decoration-color: rgba(179, 140, 255, 0.5); }
+  .card__link:hover { text-decoration-color: rgba(179, 140, 255, 0.9); }
+  .card__loc { color: var(--txt-soft); }
+  .card__desc { margin-top: 0.7rem; line-height: 1.6; color: var(--txt); }
 
-  /* Chips */
-  .tags {
-    margin-top: 0.75rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
+  .tags { margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .tag {
-    display: inline-block;
-    font-size: 0.74rem;
-    padding: 0.28rem 0.62rem;
-    border-radius: 999px;
-    color: #f1ecff;
-    background: linear-gradient(
-      180deg,
-      rgba(179, 140, 255, 0.23),
-      rgba(179, 140, 255, 0.14)
-    );
+    display: inline-block; font-size: 0.74rem; padding: 0.28rem 0.62rem; border-radius: 999px; color: #f1ecff;
+    background: linear-gradient(180deg, rgba(179, 140, 255, 0.23), rgba(179, 140, 255, 0.14));
     border: 1px solid rgba(179, 140, 255, 0.35);
     box-shadow: inset 0 0 12px rgba(179, 140, 255, 0.15);
   }
 
-  /* Reduce motion */
   @media (prefers-reduced-motion: reduce) {
-    .card {
-      transition: none !important;
-      transform: none !important;
-      opacity: 1 !important;
-      visibility: visible !important;
-    }
+    .card { transition: none !important; transform: none !important; opacity: 1 !important; visibility: visible !important; }
   }
 </style>
