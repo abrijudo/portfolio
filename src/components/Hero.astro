@@ -8,66 +8,51 @@ const email = "abrahamsenshi@gmail.com";
 const subject = "Oportunidad de trabajo";
 const body = "Hola Abraham,\nme gustaría contactar contigo para un proyecto.";
 
-// Enlaces
-const gmailWeb = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-const gmailApp = `googlegmail://co?to=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+// CAMBIO AQUÍ: Eliminamos el &fs=1 para que se abra el popup en lugar de la vista completa
+const gmailWeb = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 ---
 
 <section class="relative bg-gradient-to-br from-indigo-900 to-gray-900 text-white rounded-xl p-8 md:p-12 mb-12 shadow-2xl overflow-hidden animate-fade-in">
-  <div class="relative z-10 flex flex-col md:flex-row items-center md:justify-between text-center md:text-left">
-    <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
-      <img src={imageUrl} alt={name} class="w-32 h-32 rounded-full object-cover border-4 border-purple-500 shadow-lg animate-pop-in" />
-      <div>
-        <h1 class="text-4xl md:text-5xl font-extrabold mb-2 leading-tight tracking-wider animate-slide-up">
-          {name}
-        </h1>
-        <p class="text-xl md:text-2xl text-purple-300 mb-4 animate-slide-up delay-100">
-          {title}
-        </p>
-        <p class="text-lg text-gray-300 italic animate-fade-in delay-200">
-          "{introPhrase}"
-        </p>
-      </div>
-    </div>
-    
-    <button 
+  <div class="relative z-10 flex flex-col md:flex-row items-center md:justify-between text-center md:text-left">
+    <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+      <img
+        src="/fotoPerfil.avif"
+        alt="Abraham Alvarez Leal"
+        class="w-32 h-32 rounded-full object-cover border-4 border-purple-500 shadow-lg animate-pop-in"
+      />
+      <div>
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-2 leading-tight tracking-wider animate-slide-up">
+          Abraham Alvarez Leal
+        </h1>
+        <p class="text-xl md:text-2xl text-purple-300 mb-4 animate-slide-up delay-100">
+          Desarrollador web, multiplataforma y experto en accesibilidad web
+        </p>
+        <p class="text-lg text-gray-300 italic animate-fade-in delay-200">
+          "Transformando ideas en código funcional y escalable."
+        </p>
+      </div>
+    </div>
+
+    <a
       id="hire-me"
-      class="mt-8 md:mt-0 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 animate-bounce-in"
-    >
-      Contrátame
-    </button>
-  </div>
+      href={mailto} 
+      class="mt-8 md:mt-0 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-75"
+    >
+      Contáctame
+    </a>
+  </div>
 </section>
 
-<script is:inline>
-(() => {
-  const btn = document.getElementById("hire-me");
-  if (!btn) return;
-
-  const email = "abrahamsenshi@gmail.com";
-  const subject = "Oportunidad de trabajo";
-  const body = "Hola Abraham,\nme gustaría contactar contigo para un proyecto.";
-
-  const gmailWeb = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  const gmailApp = `googlegmail://co?to=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-  btn.addEventListener("click", () => {
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    if (isMobile) {
-      // Intentar abrir la app de Gmail
-      window.location.href = gmailApp;
-
-      // Fallback a Gmail Web si no hay app instalada
-      setTimeout(() => {
-        if (document.hasFocus()) {
-          window.location.href = gmailWeb;
-        }
-      }, 800);
-    } else {
-      // En PC: Gmail Web
-      window.open(gmailWeb, "_blank", "noopener,noreferrer");
-    }
-  });
-})();
+<script define:vars={{ gmailWeb }}>
+  (() => {
+    const btn = document.getElementById("hire-me");
+    if (!btn) return;
+  
+    btn.addEventListener("click", (e) => {
+      e.preventDefault(); 
+      window.open(gmailWeb, "_blank", "noopener,noreferrer"); 
+    });
+  })();
 </script>
